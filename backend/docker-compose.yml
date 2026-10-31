@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: careercopilot
+      POSTGRES_USER: career
+      POSTGRES_PASSWORD: career
+    volumes:
+      - career_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U career -d careercopilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/careercopilot
+      SPRING_DATASOURCE_USERNAME: career
+      SPRING_DATASOURCE_PASSWORD: career
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  career_data:
