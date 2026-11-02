@@ -20,6 +20,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/careercopilot
       SPRING_DATASOURCE_USERNAME: career
       SPRING_DATASOURCE_PASSWORD: career
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1-mini}
     depends_on:
       db:
         condition: service_healthy
