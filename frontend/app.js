@@ -202,6 +202,7 @@ function saveProfile(event) {
 // Navigation and event bindings
 function showView(viewName) {
   Object.entries(views).forEach(([name, element]) => { element.hidden = name !== viewName; });
+  $("tracker-actions").hidden = viewName !== "tracker";
   document.querySelectorAll("[data-view]").forEach((button) => {
     const active = button.dataset.view === viewName;
     button.classList.toggle("active", active);
