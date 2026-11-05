@@ -114,6 +114,22 @@ function renderApplications() {
   $("interviews").textContent = jobs.filter((job) => job.status === "Interviewing").length;
   $("offers").textContent = jobs.filter((job) => job.status === "Offer").length;
   $("count").textContent = `${jobs.length} record${jobs.length === 1 ? "" : "s"}`;
+  renderActivity();
+}
+
+function renderActivity() {
+  const labels = { created: "Added an application", updated: "Updated an application", deleted: "Deleted an application", "profile-updated": "Updated your profile" };
+  const recent = activity.slice(0, 6);
+  $("activity-list").innerHTML = recent.map((item) => {
+    const date = new Date(item.at);
+    const validDate = !Number.isNaN(date.getTime());
+    const timestamp = validDate ? date.toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) : "";
+    const job = jobs.find((candidate) => candidate.id === item.id);
+    const context = job ? `${job.role || "Role"} · ${job.company || "Company"}` : "";
+    return `<li class="activity-item"><span class="activity-mark" aria-hidden="true">✳</span><div><strong>${escapeHtml(labels[item.type] || "Workspace updated")}</strong>${context ? `<div class="muted">${escapeHtml(context)}</div>` : ""}${timestamp ? `<time class="muted" datetime="${escapeHtml(item.at)}">${escapeHtml(timestamp)}</time>` : ""}</div></li>`;
+  }).join("");
+  $("activity-empty").hidden = recent.length > 0;
+  $("activity-list").hidden = recent.length === 0;
 }
 
 function openApplicationForm(job = null) {
