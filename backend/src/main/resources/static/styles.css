@@ -75,6 +75,13 @@ tbody tr:last-child td { border-bottom: 0; }
 .pill.Rejected { background: #fbe6e4; color: #9c3e38; }
 .iconbtn { padding: 6px 9px; border-radius: 8px; }
 .empty { padding: 48px 20px; color: var(--muted); text-align: center; }
+.activity-panel { margin-top: 18px; }
+.activity-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.activity-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+.activity-item:last-child { border-bottom: 0; }
+.activity-item strong { display: block; font-size: 13px; }
+.activity-item time { display: block; margin-top: 3px; font-size: 11px; }
+.activity-mark { display: grid; width: 28px; height: 28px; flex: 0 0 28px; place-items: center; border-radius: 50%; background: var(--pale); color: var(--green); }
 .connection { margin-top: 15px; }
 .dot { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: #59a879; }
 
