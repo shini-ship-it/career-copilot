@@ -9,6 +9,9 @@ import jakarta.persistence.Table;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
+import jakarta.persistence.EntityManager;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,11 @@ import java.util.Optional;
 public class CareerCopilotApplication {
     public static void main(String[] args) {
         SpringApplication.run(CareerCopilotApplication.class, args);
+    }
+
+    @Bean
+    WorkspaceRepository workspaceRepository(EntityManager entityManager) {
+        return new JpaRepositoryFactory(entityManager).getRepository(WorkspaceRepository.class);
     }
 
     @Entity
