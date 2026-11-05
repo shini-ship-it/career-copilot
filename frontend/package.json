@@ -1,0 +1,8 @@
+{
+  "name": "career-copilot-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node --check app.js && node --check ../backend/src/main/resources/static/app.js && node build-check.mjs"
+  }
+}
