@@ -23,6 +23,8 @@
 - Keep dependencies minimal and do not commit secrets.
 - Update both UI copies whenever browser UI code changes.
 - Run the available build/tests when possible and report anything not run.
+- Keep `documents/DEVELOPMENT_TRACK.md` and `documents/MILESTONES.md` current as feature requests are implemented: record scope, status, PR/checkpoint, and remaining acceptance criteria. Do not mark work complete until its criteria are met.
+- When a feature request changes product scope or milestone order, update both planning documents in the same change as the feature.
 
 ## Local development handoff
 - The API defaults to port 8080 and uses a file-backed H2 database. For this macOS ARM64 workspace use port 8081 because 8080 may already be occupied.
