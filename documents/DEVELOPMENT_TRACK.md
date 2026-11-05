@@ -17,6 +17,7 @@ This is the working checkpoint log for feature development. Keep it concise and 
 |---|---|---|---|
 | Baseline | Application tracker, profile editor, H2 persistence, CSV export, local fallback | Existing | No automated tests found at the last inspection. |
 | Current | Repository startup fix, recent activity, agent handoff notes | In PR | PR #4; update status after review or merge. |
+| CI | GitHub Actions Java verification and frontend static build checks | In progress | Workflow runs Maven `clean verify` and `npm run build` on pull requests. |
 | Next | MVP reliability and test coverage | Planned | See M1 exit criteria in `MILESTONES.md`. |
 
 ## Feature request workflow
