@@ -21,6 +21,7 @@ Milestones are product checkpoints, not fixed delivery dates. Adjust ordering as
 
 **Status: Planned.**
 
+- [ ] Add GitHub Actions checks for Java and frontend builds on pull requests.
 - [ ] Add automated tests for workspace API validation, load/save/delete, and repository persistence.
 - [ ] Add frontend checks for tracker CRUD, search/filter behavior, profile save, and CSV export.
 - [ ] Make startup and database behavior predictable when a second instance already owns the H2 file; document the recovery path.
