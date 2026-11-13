@@ -1,3 +1,4 @@
+/opt/homebrew/Library/Homebrew/cmd/shellenv.sh: line 27: /bin/ps: Operation not permitted
 package com.careercopilot;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.net.InetAddress;
 import java.util.Map;
 import java.util.Optional;
 
@@ -101,6 +103,26 @@ public class CareerCopilotApplication {
             repository.save(workspace);
             return ResponseEntity.ok(Map.of("saved", true,
                     "updatedAt", workspace.getUpdatedAt().toString(), "applications", jobs.size()));
+        }
+
+        @PostMapping("/job-description/extract")
+        public Map<String, String> extractJobDescription(@RequestBody JsonNode payload,
+                                                         jakarta.servlet.http.HttpServletRequest request) {
+            try {
+                InetAddress caller = InetAddress.getByName(request.getRemoteAddr());
+                if (!caller.isLoopbackAddress()) {
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                            "Job URL extraction is available only from this computer.");
+                }
+            } catch (java.net.UnknownHostException exception) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                        "Could not verify this local request.");
+            }
+            String url = payload == null ? "" : payload.path("url").asText("").trim();
+            if (url.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A job posting URL is required.");
+            }
+            return Map.of("text", JobDescriptionFetcher.fetch(url));
         }
 
         @DeleteMapping("/workspace")

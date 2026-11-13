@@ -1,3 +1,4 @@
+/opt/homebrew/Library/Homebrew/cmd/shellenv.sh: line 27: /bin/ps: Operation not permitted
 <!doctype html>
 <html lang="en">
 <head>
@@ -14,6 +15,7 @@
       <nav aria-label="Main navigation">
         <button class="nav active" type="button" data-view="tracker" aria-current="page">▦ &nbsp; Application tracker</button>
         <button class="nav" type="button" data-view="profile" aria-current="false">◎ &nbsp; Your profile</button>
+        <button class="nav" type="button" data-view="match" aria-current="false">✳ &nbsp; Resume match</button>
       </nav>
       <small class="side-note">YOUR NEXT CHAPTER<br><br>One organized place for every opportunity. Keep going — your next role is out there.</small>
     </aside>
@@ -88,6 +90,7 @@
                 <label class="wide">Skills<textarea id="profile-skills" placeholder="Java, Spring Boot, SQL, communication…"></textarea></label>
                 <label class="wide">Experience<textarea id="profile-experience" placeholder="Role, company, dates, and accomplishments…"></textarea></label>
                 <label class="wide">Education & certifications<textarea id="profile-education" placeholder="Degrees, schools, certifications…"></textarea></label>
+                <label class="wide">Resume text for matching<textarea id="profile-resumeText" placeholder="Paste your resume text here. Your skills, summary, and experience above are also included in matches."></textarea></label>
               </div>
               <div class="profile-actions">
                 <span id="profile-save-status" class="muted" role="status" aria-live="polite"></span>
@@ -96,6 +99,42 @@
             </form>
           </article>
         </div>
+      </section>
+
+
+
+      <section id="match-view" hidden>
+        <section class="match-intro">
+          <div>
+            <div class="eyebrow">A clearer next step</div>
+            <h2>Compare your profile with a role</h2>
+            <p class="muted">Use a job posting URL or paste its description. We compare recognized skills with the resume text, skills, summary, experience, and education saved in your profile.</p>
+          </div>
+          <p class="match-note">The score is a transparent skill-coverage estimate, not a hiring prediction. Matching runs locally and job descriptions aren’t sent to an AI service.</p>
+        </section>
+
+        <form id="match-form" class="match-form">
+          <label>Job posting URL<input id="match-url" type="url" inputmode="url" placeholder="https://company.com/careers/role" autocomplete="url"></label>
+          <div class="match-divider"><span>or paste job description</span></div>
+          <label>Job description<textarea id="match-description" rows="10" placeholder="Paste the job description here…"></textarea></label>
+          <div class="match-form-footer">
+            <span id="match-status" class="muted" role="status" aria-live="polite">Save your profile before matching to include your latest edits.</span>
+            <button class="btn primary" id="match-submit" type="submit">Check match</button>
+          </div>
+        </form>
+
+        <section id="match-result" class="match-result" aria-live="polite" hidden>
+          <div class="match-score-card">
+            <div class="eyebrow">Skill coverage</div>
+            <strong id="match-score">—</strong>
+            <p id="match-summary" class="muted"></p>
+          </div>
+          <div class="match-skill-grid">
+            <article class="match-skill-card"><h3>Skills found in your profile <span id="match-found-count"></span></h3><ul id="match-found-list"></ul></article>
+            <article class="match-skill-card"><h3>Skills to highlight or build <span id="match-missing-count"></span></h3><ul id="match-missing-list"></ul></article>
+          </div>
+          <p class="match-footnote">We count each distinct skill from our built-in list once. A skill counts as found when it appears in your saved profile or resume text.</p>
+        </section>
       </section>
     </main>
   </div>

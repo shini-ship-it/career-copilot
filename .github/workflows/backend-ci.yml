@@ -1,19 +1,22 @@
-name: Backend CI
+/opt/homebrew/Library/Homebrew/cmd/shellenv.sh: line 27: /bin/ps: Operation not permitted
+name: Build and Verify
 on:
   push:
     branches: [main]
     paths:
       - "backend/**"
+      - "frontend/**"
       - ".github/workflows/backend-ci.yml"
   pull_request:
     paths:
       - "backend/**"
+      - "frontend/**"
       - ".github/workflows/backend-ci.yml"
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  build:
+  backend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,3 +29,13 @@ jobs:
       - name: Verify backend
         working-directory: backend
         run: mvn --batch-mode clean verify
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build frontend
+        run: npm run build --prefix frontend
