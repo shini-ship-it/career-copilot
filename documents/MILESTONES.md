@@ -1,4 +1,3 @@
-/opt/homebrew/Library/Homebrew/cmd/shellenv.sh: line 27: /bin/ps: Operation not permitted
 # Career Copilot Milestones
 
 Milestones are product checkpoints, not fixed delivery dates. Adjust ordering as feature requests arrive, and note the reason for material changes in `DEVELOPMENT_TRACK.md`.

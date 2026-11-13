@@ -1,4 +1,3 @@
-/opt/homebrew/Library/Homebrew/cmd/shellenv.sh: line 27: /bin/ps: Operation not permitted
 # Career Copilot Development Track
 
 This is the working checkpoint log for feature development. Keep it concise and update it whenever a feature is started, completed, deferred, or materially reprioritized. Use `MILESTONES.md` for milestone scope and exit criteria.
