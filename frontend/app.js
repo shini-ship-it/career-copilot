@@ -13,9 +13,38 @@ let saveTimer;
 
 // DOM references
 const $ = (id) => document.getElementById(id);
-const views = { tracker: $("tracker-view"), profile: $("profile-view") };
+const views = { tracker: $("tracker-view"), profile: $("profile-view"), match: $("match-view") };
 const connectionLabel = $("connection");
 const connectionDot = $("dot");
+
+const recognizedSkills = [
+  ["Java", ["java"]], ["JavaScript", ["javascript", "js"]], ["TypeScript", ["typescript"]],
+  ["Python", ["python"]], ["C++", ["c++"]], ["C#", ["c#", "c sharp"]], ["Go", ["golang"]],
+  ["Rust", ["rust"]], ["Ruby", ["ruby"]], ["PHP", ["php"]], ["Kotlin", ["kotlin"]],
+  ["Swift", ["swift"]], ["SQL", ["sql"]], ["HTML", ["html"]], ["CSS", ["css"]],
+  ["React", ["react", "react.js", "reactjs"]], ["Angular", ["angular"]], ["Vue", ["vue", "vue.js"]],
+  ["Node.js", ["node.js", "nodejs"]], ["Spring Boot", ["spring boot"]], ["Spring", ["spring framework"]],
+  [".NET", [".net", "dotnet"]], ["Django", ["django"]], ["Flask", ["flask"]], ["FastAPI", ["fastapi"]],
+  ["REST APIs", ["rest api", "restful api"]], ["GraphQL", ["graphql"]], ["Microservices", ["microservices"]],
+  ["AWS", ["aws", "amazon web services"]], ["Azure", ["azure"]], ["Google Cloud", ["google cloud", "gcp"]],
+  ["Docker", ["docker"]], ["Kubernetes", ["kubernetes", "k8s"]], ["Terraform", ["terraform"]],
+  ["CI/CD", ["ci/cd", "continuous integration", "continuous delivery"]], ["Git", ["git"]], ["GitHub", ["github"]],
+  ["Linux", ["linux"]], ["PostgreSQL", ["postgresql", "postgres"]], ["MySQL", ["mysql"]],
+  ["MongoDB", ["mongodb"]], ["Redis", ["redis"]], ["Kafka", ["kafka"]], ["Apache Spark", ["apache spark", "pyspark"]],
+  ["Snowflake", ["snowflake"]], ["BigQuery", ["bigquery"]], ["Databricks", ["databricks"]],
+  ["Tableau", ["tableau"]], ["Power BI", ["power bi"]], ["Microsoft Excel", ["microsoft excel", "excel"]],
+  ["Machine learning", ["machine learning"]], ["Deep learning", ["deep learning"]],
+  ["TensorFlow", ["tensorflow"]], ["PyTorch", ["pytorch"]], ["Natural language processing", ["natural language processing", "nlp"]],
+  ["Generative AI", ["generative ai", "genai"]], ["Large language models", ["large language model", "llm"]],
+  ["Prompt engineering", ["prompt engineering"]], ["Data analysis", ["data analysis"]], ["Data visualization", ["data visualization"]],
+  ["Statistics", ["statistics", "statistical analysis"]], ["A/B testing", ["a/b testing", "ab testing"]],
+  ["Agile", ["agile"]], ["Scrum", ["scrum"]], ["Jira", ["jira"]], ["Project management", ["project management"]],
+  ["Product management", ["product management"]], ["Leadership", ["leadership"]], ["Communication", ["communication"]],
+  ["Figma", ["figma"]], ["UX design", ["ux design", "user experience design"]], ["UI design", ["ui design", "user interface design"]],
+  ["Salesforce", ["salesforce"]], ["CRM", ["crm"]], ["Customer service", ["customer service"]],
+  ["Financial modeling", ["financial modeling", "financial modelling"]], ["Risk management", ["risk management"]],
+  ["Compliance", ["compliance"]], ["HIPAA", ["hipaa"]], ["SOC 2", ["soc 2", "soc2"]]
+];
 
 // Persistence
 function saveLocally() {
@@ -195,7 +224,7 @@ function exportApplications() {
 
 // Profile rendering and actions
 function renderProfile() {
-  ["name", "email", "phone", "location", "summary", "skills", "experience", "education"].forEach((field) => {
+  ["name", "email", "phone", "location", "summary", "skills", "experience", "education", "resumeText"].forEach((field) => {
     const input = $("profile-" + field);
     if (input) input.value = profile[field] || "";
   });
@@ -206,13 +235,106 @@ function renderProfile() {
 
 function saveProfile(event) {
   event.preventDefault();
-  ["name", "email", "phone", "location", "summary", "skills", "experience", "education"].forEach((field) => {
+  ["name", "email", "phone", "location", "summary", "skills", "experience", "education", "resumeText"].forEach((field) => {
     profile[field] = $("profile-" + field).value.trim();
   });
   recordActivity("profile-updated", "profile");
   persistWorkspace();
   renderProfile();
   $("profile-save-status").textContent = "Profile saved.";
+}
+
+function containsSkill(text, term) {
+  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|[^a-z0-9])${escaped}(?=$|[^a-z0-9])`, "i").test(text);
+}
+
+function getSkills(text) {
+  const normalized = String(text || "").toLowerCase();
+  return recognizedSkills
+    .filter(([, terms]) => terms.some((term) => containsSkill(normalized, term)))
+    .map(([name]) => name);
+}
+
+function setSkillList(id, skills, emptyMessage) {
+  const list = $(id);
+  list.replaceChildren();
+  if (skills.length === 0) {
+    const item = document.createElement("li");
+    item.className = "muted";
+    item.textContent = emptyMessage;
+    list.append(item);
+    return;
+  }
+  skills.forEach((skill) => {
+    const item = document.createElement("li");
+    item.textContent = skill;
+    list.append(item);
+  });
+}
+
+function renderResumeMatch(jobDescription) {
+  const profileText = [profile.resumeText, profile.skills, profile.summary, profile.experience, profile.education]
+    .filter(Boolean).join("\n");
+  const required = getSkills(jobDescription);
+  const candidate = new Set(getSkills(profileText));
+  const matched = required.filter((skill) => candidate.has(skill));
+  const missing = required.filter((skill) => !candidate.has(skill));
+
+  $("match-result").hidden = false;
+  $("match-score").textContent = required.length ? `${Math.round((matched.length / required.length) * 100)}%` : "—";
+  $("match-score").setAttribute("aria-label", required.length ? `Match score ${Math.round((matched.length / required.length) * 100)} percent` : "Match score unavailable");
+  $("match-summary").textContent = required.length
+    ? `${matched.length} of ${required.length} recognized job skills appear in your saved profile.`
+    : "No recognizable skills were found in this description, so a match percentage is not available.";
+  $("match-found-count").textContent = `(${matched.length})`;
+  $("match-missing-count").textContent = `(${missing.length})`;
+  setSkillList("match-found-list", matched, "No recognized job skills found in your profile yet.");
+  setSkillList("match-missing-list", missing, required.length ? "No missing skills from the recognized list." : "No skills to compare.");
+}
+
+async function checkResumeMatch(event) {
+  event.preventDefault();
+  const url = $("match-url").value.trim();
+  let description = $("match-description").value.trim();
+  if (Boolean(url) === Boolean(description)) {
+    $("match-status").textContent = "Enter a job posting URL or paste its description (choose one).";
+    return;
+  }
+
+  if (!url && description.length < 40) {
+    $("match-status").textContent = "Paste a fuller job description (at least 40 characters) so there is enough context to compare.";
+    return;
+  }
+  const profileText = [profile.resumeText, profile.skills, profile.summary, profile.experience, profile.education]
+    .filter(Boolean).join(" ").trim();
+  if (!profileText) {
+    $("match-status").textContent = "Add resume text or profile skills/experience, then save your profile before matching.";
+    return;
+  }
+
+  const button = $("match-submit");
+  button.disabled = true;
+  $("match-result").hidden = true;
+  try {
+    if (url) {
+      $("match-status").textContent = "Reading the public job posting…";
+      const response = await fetch("/api/job-description/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.detail || result.message || result.error || "Could not read this posting. Paste the job description instead.");
+      description = result.text;
+    }
+    renderResumeMatch(description);
+    $("match-status").textContent = "Match complete. Your job description was not saved.";
+  } catch (error) {
+    $("match-status").textContent = error.message || "Could not read this posting. Paste the job description instead.";
+  } finally {
+    button.disabled = false;
+  }
 }
 
 // Navigation and event bindings
@@ -224,10 +346,13 @@ function showView(viewName) {
     button.classList.toggle("active", active);
     button.setAttribute("aria-current", active ? "page" : "false");
   });
-  $("page-title").textContent = viewName === "profile" ? "Your professional profile" : "Good things take tracking.";
-  $("page-subtitle").textContent = viewName === "profile"
-    ? "Keep your career details organized in one place."
-    : "A calmer way to manage your job search.";
+  const pageCopy = {
+    tracker: ["Good things take tracking.", "A calmer way to manage your job search."],
+    profile: ["Your professional profile", "Keep your career details organized in one place."],
+    match: ["Resume match", "See which job requirements your profile already covers."]
+  };
+  $("page-title").textContent = pageCopy[viewName][0];
+  $("page-subtitle").textContent = pageCopy[viewName][1];
 }
 
 function bindEvents() {
@@ -243,6 +368,7 @@ function bindEvents() {
   $("rows").addEventListener("click", handleApplicationActions);
   $("export").addEventListener("click", exportApplications);
   $("profile-form").addEventListener("submit", saveProfile);
+  $("match-form").addEventListener("submit", checkResumeMatch);
   document.querySelectorAll("[data-view]").forEach((button) => {
     button.addEventListener("click", () => showView(button.dataset.view));
   });

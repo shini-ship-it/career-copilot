@@ -23,11 +23,21 @@
 - Keep dependencies minimal and do not commit secrets.
 - Update both UI copies whenever browser UI code changes.
 - Run the available build/tests when possible and report anything not run.
+- Keep `documents/DEVELOPMENT_TRACK.md` and `documents/MILESTONES.md` current as feature requests are implemented: record scope, status, PR/checkpoint, and remaining acceptance criteria. Do not mark work complete until its criteria are met.
+- When a feature request changes product scope or milestone order, update both planning documents in the same change as the feature.
 
 ## Local development handoff
-- The API defaults to port 8080 and uses a file-backed H2 database. If 8080 is occupied, use `--server.port=8081`.
-- This workspace may contain a local ARM64 Java 17 runtime and Maven under `work/tools/`; invoke Maven with `-Dmaven.repo.local="$PWD/work/m2"` when the normal user Maven cache is inaccessible.
-- For the local 8081 instance, use `--spring.datasource.url="jdbc:h2:file:$PWD/work/data8081/localdb"` to avoid colliding with another app instance. Do not add `AUTO_SERVER=TRUE` in environments that block H2's secondary socket.
+- The API defaults to port 8080 and uses a file-backed H2 database. For this macOS ARM64 workspace use port 8081 because 8080 may already be occupied.
+- Local build tools are in `work/tools/`: Java at `work/tools/jdk-17.0.21+9/Contents/Home` and Maven at `work/tools/apache-maven-3.9.9/bin/mvn`. Maven dependencies are cached in `work/m2/`.
+- Build from the repository root with:
+  `JAVA_HOME="$PWD/work/tools/jdk-17.0.21+9/Contents/Home" PATH="$PWD/work/tools/jdk-17.0.21+9/Contents/Home/bin:$PATH" "$PWD/work/tools/apache-maven-3.9.9/bin/mvn" -B -Dmaven.repo.local="$PWD/work/m2" -f backend/pom.xml -DskipTests package`
+- If the local Java or Maven folders are missing, install Java 17 ARM64 and Maven 3.9+ from their official distributions into `work/tools/`, then run the build command above. Do not install into or change ownership of system/Homebrew directories to work around local permissions.
+- Start the app from the repository root with:
+  `JAVA_HOME="$PWD/work/tools/jdk-17.0.21+9/Contents/Home" "$PWD/work/tools/jdk-17.0.21+9/Contents/Home/bin/java" -jar backend/target/career-copilot-1.0.0.jar --server.port=8081 --server.address=127.0.0.1 --spring.datasource.url="jdbc:h2:file:$PWD/work/data8081/localdb"`
+- Keep the Java process attached to a persistent terminal session. If a detached session is explicitly needed, use `nohup` and redirect output to `work/startup.log`; verify it stays up after the launch command returns.
+- Before starting, inspect port 8081 with `lsof -nP -iTCP:8081 -sTCP:LISTEN`. If it is occupied by a stale Career Copilot process, stop that process gracefully before relaunching; duplicate instances can lock the H2 file and make the page hang. Never kill a process until its command/cwd confirms it is this app.
+- Verify startup by checking `http://127.0.0.1:8081/api/health` returns `status: ok`, `/` returns the page body, and `/styles.css` and `/app.js` return HTTP 200. A health response alone does not confirm static assets load.
+- Use the separate H2 file `work/data8081/localdb` for the 8081 instance to avoid colliding with the default local database. Do not add `AUTO_SERVER=TRUE` in environments that block H2's secondary socket.
+- Keep downloaded runtimes, Maven cache, logs, database files, and other generated files under `work/`; do not commit them.
 - A prior startup issue came from the nested `WorkspaceRepository` interface not being discovered by Spring Data. The application now provides it through `JpaRepositoryFactory` in a `@Bean`; retain this wiring unless the repository is moved to a top-level package and verified.
 - Current UI includes application tracking, profile editing, and a recent-activity list backed by the existing workspace `activity` array. Preserve escaping of user-controlled values and existing local-storage fallback.
-- Local startup sessions may terminate when a managed terminal ends. Confirm the current server state before assuming a previous `localhost:8081` tab still has a live backend.
