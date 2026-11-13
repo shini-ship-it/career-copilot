@@ -6,11 +6,11 @@ This is the working checkpoint log for feature development. Keep it concise and 
 
 - **Product stage:** Local MVP; single shared workspace, no authentication.
 - **Current branch:** `codex/resume-match`.
-- **Current pull request:** Not opened yet.
-- **Included work:** M0 local MVP baseline, complete local setup handoff, Java and frontend GitHub Actions builds, and resume-to-job skill matching in progress.
-- **Build checkpoint:** Maven package and frontend build passed. A local smoke check on port 8082 confirmed the health/page endpoints, public job-page extraction, and rejection of a loopback URL. Automated tests were not run.
+- **Current pull request:** [#5 — Add profile to job description resume matching](https://github.com/shini-ship-it/career-copilot/pull/5), open for review.
+- **Included work:** M0 local MVP baseline, complete local setup handoff, Java and frontend GitHub Actions builds, and resume-to-job skill matching.
+- **Build checkpoint:** Maven package and frontend build passed. GitHub Actions Java and frontend jobs passed. A local smoke check on port 8082 confirmed the health/page endpoints, public job-page extraction, and rejection of a loopback URL. Automated tests were not run.
 - **Local UI note:** Port 8081 still serves the pre-feature process (PID 48651). This shell could not signal it, and Terminal UI control is restricted; restart with the documented command to load the feature on 8081.
-- **Next checkpoint:** Open the feature PR, then continue M1 reliability and automated coverage.
+- **Next checkpoint:** Address PR review, then continue M1 reliability and automated coverage.
 
 ## Work log
 
@@ -18,8 +18,8 @@ This is the working checkpoint log for feature development. Keep it concise and 
 |---|---|---|---|
 | Baseline | Application tracker, profile editor, H2 persistence, CSV export, local fallback | Existing | No automated tests found at the last inspection. |
 | M0 | Repository startup fix, recent activity, agent handoff notes | Complete | PR #4 merged. |
-| CI | GitHub Actions Java verification and frontend static build checks | In progress | Added on `codex/resume-match`; workflow runs Maven `clean verify` and `npm run build` on pull requests. |
-| Resume match | Saved resume text, pasted or public URL job input, skill coverage score and skill lists | In progress | Current branch `codex/resume-match`; Java package and frontend sync/build passed; URL smoke check read a public page and rejected loopback. |
+| CI | GitHub Actions Java verification and frontend static build checks | In review | Added on `codex/resume-match`; both Java and frontend jobs passed. |
+| Resume match | Saved resume text, pasted or public URL job input, skill coverage score and skill lists | In review | PR #5; Java package and frontend sync/build passed; URL smoke check read a public page and rejected loopback. |
 | Next | MVP reliability and test coverage | Planned | See M1 exit criteria in `MILESTONES.md`. |
 
 ## Feature request workflow

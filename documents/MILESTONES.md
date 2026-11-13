@@ -56,14 +56,13 @@ Milestones are product checkpoints, not fixed delivery dates. Adjust ordering as
 
 ## M4 — Resume and job matching
 
-**Status: In progress — local profile-to-job skill matching is being implemented on `codex/resume-match`.**
+**Status: In review — PR #5 (`codex/resume-match`).**
 
-- [ ] Let users save resume text in their profile, or use existing profile skills and experience.
-- [ ] Accept a pasted job description or fetch readable text from a public job URL.
-- [ ] Show a transparent skill coverage percentage plus matched and missing recognized skills.
-- [ ] Keep URL fetching local-only, bounded, and restricted to public HTTP(S) pages.
-- [ ] Document scoring limits; avoid presenting the result as a hiring prediction.
-- [ ] Keep AI suggestions assistive; do not submit applications or make decisions on the user's behalf.
+- [x] Let users save resume text in their profile, or use existing profile skills and experience.
+- [x] Accept a pasted job description or fetch readable text from a public job URL.
+- [x] Show a transparent skill coverage percentage plus matched and missing recognized skills.
+- [x] Keep URL fetching local-only, bounded, and restricted to public HTTP(S) pages.
+- [x] Document scoring limits; avoid presenting the result as a hiring prediction.
 
 **Exit criteria:** users can edit saved resume text, compare against a pasted description or supported public URL, see matched and missing skills with a clear score basis, and understand that the result is a limited estimate.
 
